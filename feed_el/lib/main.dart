@@ -1,5 +1,11 @@
+import 'package:feed_el/providers/days.dart';
+import 'package:feed_el/providers/feedings.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:feed_el/screens/main_list.dart';
+import 'package:feed_el/screens/day_screen.dart';
+import 'package:feed_el/screens/add_feeding.dart';
+import 'package:feed_el/screens/feeding_info.dart';
 
 void main() {
   runApp(const MyApp());
@@ -8,16 +14,27 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'FeedEl',
-      theme: ThemeData(
-        primarySwatch: Colors.teal,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<Days>(create: (_) => Days()),
+        ChangeNotifierProvider<Feedings>(create: (_) => Feedings()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'FeedEl',
+        theme: ThemeData(
+          primarySwatch: Colors.teal,
+        ),
+        initialRoute: '/',
+        routes: {
+          MainList.routeName: (ctx) => const MainList(),
+          DayScreen.routeName: (ctx) => const DayScreen(),
+          AddFeeding.routeName: (ctx) => const AddFeeding(),
+          FeedingInfo.routeName: (ctx) => const FeedingInfo(),
+        },
       ),
-      home: const MainList('Feeding Eliza Tracker'),
     );
   }
 }
