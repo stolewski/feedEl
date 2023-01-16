@@ -7,7 +7,7 @@ class DBProvider {
     final dbPath = join(await sql.getDatabasesPath(), 'feedings.db');
     return sql.openDatabase(dbPath, onCreate: (db, version) {
       return db.execute(
-          'CREATE TABLE feeding (id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, type TEXT, side TEXT, quantity TEXT, note TEXT, eructated TEXT, date TEXT)');
+          'CREATE TABLE feeding (id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, type TEXT, side TEXT, quantity TEXT, eructated TEXT, date TEXT, vivomix TEXT, d3 TEXT)');
     }, version: 1);
   }
 

@@ -62,11 +62,19 @@ class FeedingInfo extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 15.0),
             child: Text(
-              'Notes: ${feeding.note}',
+              'Vivomix:  ${feeding.vivomix ? '+' : '-'}',
               style: const TextStyle(fontSize: 18),
               textAlign: TextAlign.center,
             ),
-          )
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 15.0),
+            child: Text(
+              'D3:  ${feeding.d3 ? '+' : '-'}',
+              style: const TextStyle(fontSize: 18),
+              textAlign: TextAlign.center,
+            ),
+          ),
         ]),
       ),
     );

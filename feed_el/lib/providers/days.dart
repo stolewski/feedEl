@@ -2,6 +2,7 @@ import 'package:feed_el/db/db_provider.dart';
 import 'package:flutter/material.dart';
 
 import '../models/day.dart';
+import 'package:feed_el/utils/string_api.dart';
 
 class Days with ChangeNotifier {
   List<Day> _days = [];
@@ -10,8 +11,8 @@ class Days with ChangeNotifier {
     return [..._days];
   }
 
-  addDay(date) {
-    if (!_days.any((item) => item.date == date)) {
+  addDay(String date) {
+    if (!_days.any((item) => item.date.subDate() == date.subDate())) {
       _days.add(Day(date));
       notifyListeners();
       DBProvider.insertDay('day', {"date": date});

@@ -11,14 +11,15 @@ class Feedings with ChangeNotifier {
   }
 
   addFeeding(TimeOfDay time, String type, String side, int? quantity,
-      bool eructated, String note, String date) {
+      bool eructated, bool vivomix, bool d3, String date) {
     final newFeeding = Feeding(
         time: time,
         type: type,
         side: side,
         quantity: quantity,
         eructated: eructated,
-        note: note,
+        vivomix: vivomix,
+        d3: d3,
         date: date);
     _feedings.add(newFeeding);
     notifyListeners();
@@ -27,7 +28,8 @@ class Feedings with ChangeNotifier {
       "type": type,
       "side": side,
       "quantity": quantity ?? 0,
-      "note": note,
+      "d3": d3.toString(),
+      "vivomix": vivomix.toString(),
       "eructated": eructated.toString(),
       "date": date
     };
@@ -43,11 +45,12 @@ class Feedings with ChangeNotifier {
                 minute: int.parse(feeding['time'].split(":")[1])),
             type: feeding['type'],
             side: feeding['side'],
-            note: feeding['note'],
+            vivomix: feeding['vivomix'] == 'true',
+            d3: feeding['d3'] == 'true',
             eructated: feeding['eructated'] == 'true',
             quantity: int.parse(feeding['quantity']),
             date: feeding['date']))
-        .where((item) => item.date == date)
+        .where((item) => item.date.split('T').first == date)
         .toList();
     notifyListeners();
   }
@@ -66,5 +69,13 @@ class Feedings with ChangeNotifier {
     return result.isNotEmpty
         ? result.reduce((value, element) => value + element).toString()
         : '-';
+  }
+
+  bool wasVVmix() {
+    return _feedings.any((element) => element.vivomix);
+  }
+
+  bool wasD3() {
+    return _feedings.any((element) => element.d3);
   }
 }

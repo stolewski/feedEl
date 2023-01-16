@@ -1,6 +1,7 @@
 import 'package:feed_el/providers/days.dart';
 import 'package:flutter/material.dart';
 import 'package:feed_el/screens/day_screen.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class MainList extends StatelessWidget {
@@ -11,7 +12,7 @@ class MainList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final today = DateTime.now().toString().substring(0, 10);
+    final today = DateTime.now();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Feeding Eliza tracker'),
@@ -29,13 +30,18 @@ class MainList extends StatelessWidget {
                       ? ch!
                       : ListView.builder(
                           itemCount: days.days.length,
-                          itemBuilder: (ctx, i) => ListTile(
-                                title: Text(days.days[i].date,
-                                    textAlign: TextAlign.center),
-                                onTap: () => Navigator.of(ctx).pushNamed(
-                                    DayScreen.routeName,
-                                    arguments: days.days[i].date),
-                              )))),
+                          itemBuilder: (ctx, i) {
+                            final DateTime parsedDate =
+                                DateTime.parse(days.days[i].date);
+                            return ListTile(
+                              title: Text(
+                                  DateFormat.yMMMMd().format(parsedDate),
+                                  textAlign: TextAlign.center),
+                              onTap: () => Navigator.of(ctx).pushNamed(
+                                  DayScreen.routeName,
+                                  arguments: parsedDate),
+                            );
+                          }))),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.of(context)
             .pushNamed(DayScreen.routeName, arguments: today),

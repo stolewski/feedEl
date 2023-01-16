@@ -1,8 +1,11 @@
+import 'package:feed_el/models/feeding.dart';
 import 'package:flutter/material.dart';
 import 'package:feed_el/screens/add_feeding.dart';
 import 'package:feed_el/screens/feeding_info.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:feed_el/providers/feedings.dart';
+import 'package:feed_el/utils/date_time_api.dart';
 
 class DayScreen extends StatefulWidget {
   static const routeName = '/dayScreen';
@@ -16,13 +19,31 @@ class _DayScreenState extends State<DayScreen> {
   DateTime today = DateTime.now();
   late List dbData;
 
+  void addFeeding(String date) {
+    if (today.toDateString() == date) {
+      Navigator.of(context).pushNamed(AddFeeding.routeName);
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
+
+  String getTitleString(Feeding feeding) {
+    if (feeding.type == 'MM') {
+      return '${feeding.type} ${feeding.quantity} ml';
+    } else if (feeding.type == 'BF') {
+      return '${feeding.type} ${feeding.side}';
+    } else
+      return '';
+  }
+
   @override
   Widget build(BuildContext context) {
-    final String date = ModalRoute.of(context)!.settings.arguments as String;
-    final String today = DateTime.now().toString().substring(0, 10);
+    final DateTime date =
+        ModalRoute.of(context)!.settings.arguments as DateTime;
+    final DateTime today = DateTime.now();
     return Scaffold(
       appBar: AppBar(
-        title: Text(date),
+        title: Text(DateFormat.yMMMMd().format(date)),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 35),
@@ -30,26 +51,24 @@ class _DayScreenState extends State<DayScreen> {
           children: [
             Center(
               child: Text(
-                date,
+                DateFormat.yMMMMd().format(date),
                 style:
                     const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(height: 15),
-            if (date == today)
+            if (date.toDateString() == today.toDateString())
               Center(
                 child: OutlinedButton(
                   child: const Text('Add new feeding'),
-                  onPressed: () => Navigator.of(context).pushNamed(
-                      AddFeeding.routeName,
-                      arguments: DateTime.now()),
+                  onPressed: () => addFeeding(date.toDateString()),
                 ),
               ),
             const SizedBox(height: 20),
             Expanded(
               child: FutureBuilder(
                   future: Provider.of<Feedings>(context, listen: false)
-                      .getDayFeedings(date),
+                      .getDayFeedings(date.toDateString()),
                   builder: ((context, snapshot) => snapshot.connectionState ==
                           ConnectionState.waiting
                       ? const Center(
@@ -78,12 +97,23 @@ class _DayScreenState extends State<DayScreen> {
                                             'Total MM amount: ${Provider.of<Feedings>(context).calculateMMamount()} ml'),
                                       ],
                                     ),
+                                    const SizedBox(height: 15),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Text(
+                                            'Vivomix: ${Provider.of<Feedings>(context).wasVVmix() ? '+' : '-'}'),
+                                        Text(
+                                            'D3: ${Provider.of<Feedings>(context).wasD3() ? '+' : '-'}'),
+                                      ],
+                                    ),
                                     Expanded(
                                       child: ListView.builder(
                                         itemCount: feedingsList.feedings.length,
                                         itemBuilder: (context, ind) => ListTile(
                                           title: Text(
-                                              '#${ind + 1} Feeding ${feedingsList.feedings[ind].type}'),
+                                              '#${ind + 1} ${getTitleString(feedingsList.feedings[ind])}'),
                                           subtitle: Text(
                                               MaterialLocalizations.of(context)
                                                   .formatTimeOfDay(feedingsList

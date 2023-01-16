@@ -23,6 +23,8 @@ class _AddFeedingState extends State<AddFeeding> {
   FeedingType? _feedingType;
   Side? _side;
   bool? _isEructated = false;
+  bool _isVivomix = false;
+  bool _isD3 = false;
 
   @override
   void dispose() {
@@ -42,7 +44,7 @@ class _AddFeedingState extends State<AddFeeding> {
     }
   }
 
-  _saveFeeding(DateTime today) {
+  _saveFeeding() {
     final side = _side == Side.both
         ? 'both'
         : _side == Side.left
@@ -52,24 +54,22 @@ class _AddFeedingState extends State<AddFeeding> {
     final quantity = _quantityController.text.isEmpty
         ? null
         : int.parse(_quantityController.text);
-    final date = today.toString().substring(0, 10);
+    final today = DateTime.now().toIso8601String();
     Provider.of<Feedings>(context, listen: false).addFeeding(_feedingTime, type,
-        side, quantity, _isEructated!, _noteController.text, date);
+        side, quantity, _isEructated!, _isVivomix, _isD3, today);
 
-    Provider.of<Days>(context, listen: false).addDay(date);
+    Provider.of<Days>(context, listen: false).addDay(today);
     Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
-    final DateTime today =
-        ModalRoute.of(context)!.settings.arguments as DateTime;
     return Scaffold(
         appBar: AppBar(
           title: const Text('Add New Feeding'),
           actions: [
             TextButton(
-                onPressed: () => _saveFeeding(today),
+                onPressed: () => _saveFeeding(),
                 child:
                     const Text('SAVE', style: TextStyle(color: Colors.white)))
           ],
@@ -219,17 +219,28 @@ class _AddFeedingState extends State<AddFeeding> {
                           ],
                         ),
                         const SizedBox(height: 25),
-                        TextFormField(
-                          minLines: 3,
-                          maxLines: null,
-                          controller: _noteController,
-                          keyboardType: TextInputType.multiline,
-                          style: const TextStyle(fontSize: 17.0),
-                          decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Notes',
-                              alignLabelWithHint: true),
+                        Row(
+                          children: [
+                            Checkbox(
+                                value: _isVivomix,
+                                onChanged: (bool? value) => setState(() {
+                                      _isVivomix = value!;
+                                    })),
+                            const Text('Vivomix'),
+                          ],
                         ),
+                        const SizedBox(height: 25),
+                        Row(
+                          children: [
+                            Checkbox(
+                                value: _isD3,
+                                onChanged: (bool? value) => setState(() {
+                                      _isD3 = value!;
+                                    })),
+                            const Text('D3'),
+                          ],
+                        ),
+                        const SizedBox(height: 25),
                       ],
                     )),
               ),

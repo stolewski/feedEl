@@ -6,7 +6,8 @@ class Feeding {
   final String? side;
   final int? quantity;
   final bool eructated;
-  final String note;
+  final bool vivomix;
+  final bool d3;
   final String date;
 
   Feeding(
@@ -15,6 +16,7 @@ class Feeding {
       this.side,
       required this.eructated,
       this.quantity,
-      required this.note,
+      required this.vivomix,
+      required this.d3,
       required this.date});
 }
