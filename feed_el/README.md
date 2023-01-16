@@ -1,6 +1,6 @@
-# feed_el
+# feedEl
 
-A new Flutter project.
+Flutter app to track my daughter Eliza feedings
 
 ## Getting Started
 
