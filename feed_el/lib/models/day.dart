@@ -1,5 +1,5 @@
 class Day {
-  String date;
+  final String date;
 
   Day(this.date);
 }

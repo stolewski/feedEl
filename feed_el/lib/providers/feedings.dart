@@ -12,7 +12,9 @@ class Feedings with ChangeNotifier {
 
   addFeeding(TimeOfDay time, String type, String side, int? quantity,
       bool eructated, bool vivomix, bool d3, String date) {
+    final id = DateTime.now().millisecondsSinceEpoch;
     final newFeeding = Feeding(
+        id: id,
         time: time,
         type: type,
         side: side,
@@ -24,6 +26,7 @@ class Feedings with ChangeNotifier {
     _feedings.add(newFeeding);
     notifyListeners();
     Map<String, Object> data = {
+      "id": id,
       "time": time.toString().substring(10, 15),
       "type": type,
       "side": side,
@@ -40,6 +43,7 @@ class Feedings with ChangeNotifier {
     final dataList = await DBProvider.getFeedings('feeding');
     _feedings = dataList
         .map((feeding) => Feeding(
+            id: feeding['id'],
             time: TimeOfDay(
                 hour: int.parse(feeding['time'].split(":")[0]),
                 minute: int.parse(feeding['time'].split(":")[1])),
@@ -77,5 +81,12 @@ class Feedings with ChangeNotifier {
 
   bool wasD3() {
     return _feedings.any((element) => element.d3);
+  }
+
+  void deleteFeeding(int index) {
+    final int id = _feedings[index].id;
+    _feedings.removeAt(index);
+    notifyListeners();
+    DBProvider.deleteFeeding(id);
   }
 }

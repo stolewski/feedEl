@@ -7,7 +7,7 @@ class DBProvider {
     final dbPath = join(await sql.getDatabasesPath(), 'feedings.db');
     return sql.openDatabase(dbPath, onCreate: (db, version) {
       return db.execute(
-          'CREATE TABLE feeding (id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, type TEXT, side TEXT, quantity TEXT, eructated TEXT, date TEXT, vivomix TEXT, d3 TEXT)');
+          'CREATE TABLE feeding (id INTEGER PRIMARY KEY, time TEXT, type TEXT, side TEXT, quantity TEXT, eructated TEXT, date TEXT, vivomix TEXT, d3 TEXT)');
     }, version: 1);
   }
 
@@ -48,5 +48,15 @@ class DBProvider {
   static Future<List<Map<String, dynamic>>> getDays(String table) async {
     final db = await DBProvider.dbDays();
     return db.query(table);
+  }
+
+  static Future<void> deleteFeeding(int id) async {
+    final db = await DBProvider.dbFeedings();
+
+    await db.delete(
+      'feeding',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 }

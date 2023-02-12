@@ -1,7 +1,7 @@
+import 'package:feed_el/components/months.dart';
 import 'package:feed_el/providers/days.dart';
 import 'package:flutter/material.dart';
 import 'package:feed_el/screens/day_screen.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class MainList extends StatelessWidget {
@@ -26,22 +26,8 @@ class MainList extends StatelessWidget {
                 )
               : Consumer<Days>(
                   child: const Center(child: Text('You have no records yet')),
-                  builder: (ctx, days, ch) => days.days.isEmpty
-                      ? ch!
-                      : ListView.builder(
-                          itemCount: days.days.length,
-                          itemBuilder: (ctx, i) {
-                            final DateTime parsedDate =
-                                DateTime.parse(days.days[i].date);
-                            return ListTile(
-                              title: Text(
-                                  DateFormat.yMMMMd().format(parsedDate),
-                                  textAlign: TextAlign.center),
-                              onTap: () => Navigator.of(ctx).pushNamed(
-                                  DayScreen.routeName,
-                                  arguments: parsedDate),
-                            );
-                          }))),
+                  builder: (ctx, days, ch) =>
+                      days.days.isEmpty ? ch! : Months(days.days))),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.of(context)
             .pushNamed(DayScreen.routeName, arguments: today),

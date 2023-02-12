@@ -1,4 +1,5 @@
 import 'package:feed_el/models/feeding.dart';
+import 'package:feed_el/screens/main_list.dart';
 import 'package:flutter/material.dart';
 import 'package:feed_el/screens/add_feeding.dart';
 import 'package:feed_el/screens/feeding_info.dart';
@@ -20,10 +21,11 @@ class _DayScreenState extends State<DayScreen> {
   late List dbData;
 
   void addFeeding(String date) {
-    if (today.toDateString() == date) {
+    final DateTime updatedToday = DateTime.now();
+    if (updatedToday.toDateString() == date) {
       Navigator.of(context).pushNamed(AddFeeding.routeName);
     } else {
-      Navigator.of(context).pop();
+      Navigator.of(context).pushNamed(MainList.routeName);
     }
   }
 
@@ -44,6 +46,10 @@ class _DayScreenState extends State<DayScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(DateFormat.yMMMMd().format(date)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pushNamed(MainList.routeName),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 35),
@@ -118,6 +124,14 @@ class _DayScreenState extends State<DayScreen> {
                                               MaterialLocalizations.of(context)
                                                   .formatTimeOfDay(feedingsList
                                                       .feedings[ind].time)),
+                                          trailing: IconButton(
+                                            icon: const Icon(
+                                                Icons.delete_outline_rounded),
+                                            onPressed: () =>
+                                                Provider.of<Feedings>(context,
+                                                        listen: false)
+                                                    .deleteFeeding(ind),
+                                          ),
                                           onTap: () {
                                             Navigator.of(context).pushNamed(
                                                 FeedingInfo.routeName,
